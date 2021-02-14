@@ -173,5 +173,7 @@ To integrate this tracker with Home Assistant to detect room presence, it can be
 ### Single tracker
 
 Using only one tracker device to report the location of the tracked BLE devices.
-- Locations must be configured
-- Location name will be appened to the `mqtt.topic`
+
+- `single_tracker` setting must be set to `true` in `config.yaml`.
+- Locations must be (configured)[#Defining-locations].
+- Location name will be added to the `mqtt.topic` (If `mqtt.topic` is set to "bletracker", every time a device is tracked in a defined location a message will be sent to the topic "bletracker/[location_name]").

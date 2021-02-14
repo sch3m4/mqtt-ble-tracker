@@ -173,6 +173,19 @@ There are two different ways to integrate this tracker with Home Assistant to de
 - [Single tracker](#Single-tracker)
 - Multiples trackers
 
+For Home Assistant, there is no difference. In order to enable presence detection you only have to add the following sensor:
+
+```
+- platform: mqtt_room
+  name: ble tag 1
+  device_id: ca:fe:ca:fe:ca:fe
+  state_topic: bletracker
+  away_timeout: 360
+```
+
+**Note**: The `state_topic` and `device_id` in Home Assistant must match the `mqtt.topic` and `devices.mac` in `config.yaml`.
+
+
 ### Single tracker
 
 Using only one tracker device to report the location of the tracked BLE devices.

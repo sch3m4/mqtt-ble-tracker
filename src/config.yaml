@@ -3,8 +3,8 @@ scan_period: 3
 single_tracker: true
 
 mqtt:
-  name: Bedroom BLE Tracker
-  host: 192.168.6.12
+  name: BLE Tracker
+  host: mqtt.mynetwork.local
   port: 1883
   username: #mqtt-user
   password: #mqtt-pass

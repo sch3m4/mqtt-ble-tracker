@@ -39,12 +39,36 @@ Before running the BLE tracker, you need to configure some settings in `config.y
  - `messages.include_rssi`: Boolean to specify whether include the RSSI in the MQTT message or not.
  
 ## Including location names
-You can send the name of the location where your device is at, by configuring the `locations` ranges.
-By default, location names are not sent to the MQTT server, but you can include them by setting the boolean setting `messages.include_location` in `config.yaml`.
+
+By default, location names are not sent to the MQTT server, but you can include them by setting the boolean setting `messages.include_location` in `config.yaml` as specified in [General setup](#General-setup) and configuring the `locations` ranges.
 
 ### Defining locations
-Locations are defined depending on the distance between the tracker device and the tracked device.
-To add a new location, [set up the tracked device](#Discovering-and-setting-up-your-devices)  in the `config.yaml` file.
+
+Locations are defined based on the distance between the tracker device and the tracked device.
+
+To add a new location, follow this steps:
+1. [Set up the tracked device](#Discovering-and-setting-up-your-devices)  in the `config.yaml` file.
+2. Take the tracked device to the different locations you want to identify.
+3. Write down the average values for `distance` reported by the tracker device on each location.
+4. Set the distances for each location in `config.yaml` under `locations` section as follows:
+```
+locations:
+  livingroom:
+    min_dist: 0
+    max_dist: 5
+
+  bathroom:
+    min_dist: 5
+    max_dist: 7
+
+  bedroom:
+    min_dist: 7
+    max_dist: 10
+```
+
+Now, every time the tracker device reports the distance to any monitored device, it will include the location name.
+
+**Note**: If there is no location in range, the `location` field will be set to `status_off`, as configured in the (device setup)[#Device-set-up].
 
 ## Discovering and setting up your devices
 ### Distance calculation
@@ -61,7 +85,7 @@ For the software to be able to calculate the distance to your device, you need t
 
 ### Discovering and adjustment
 
-**IMPORTANT**: Before running any scan, place the BLE device 1 meter away from the BLE scanner device.
+**IMPORTANT**: Before running any scan, take the BLE device 1 meter away from the BLE scanner device.
 
 To discover devices as well as calculate the "**MR**" and the "**N**" constant, run the script with the following arguments:
 
@@ -117,6 +141,15 @@ devices:
     timeout: 0
     status_off: not_home
 ```
+
+Fields description:
+- `mac`: Device bluetooth mac address.
+- `name`: Device name.
+- `measured_rssi`: RSSI value 1 meter away from the tracker device (see: (Discovering and adjustment)[#Discovering-and-adjustment]).
+- `n`: Constant to calculate the distance (see: (Discovering and adjustment)[#Discovering-and-adjustment]).
+- `timeout`: If the device is not seen after this period of time (seconds), the tracker device sends a message with `'distance' : -1` to the MQTT broker (0 means disabled). If `message.include_location` is set to `true`, the location name  will be set to `status_off`.
+- `status_off`: Location name when the device is untracked (due to timeout) or out of range from the defined locations.
+
 
 ## How to install
 1. Move the project folder to your prefered location

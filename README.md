@@ -4,7 +4,7 @@ This project was made to reuse RPI/OSMC devices as BLE tracker, but it can work 
 ## Prerequisites
 - On Debian based machines:
 ```
-apt-get install python3-pip python3-setuptools libglib2.0-dev build-essential
+apt-get install python3-pip python3-setuptools libglib2.0-dev build-essential git
 ```
 
 - Install Python dependencies:

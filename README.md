@@ -6,14 +6,8 @@ Every time a BLE beacon is received, it applies a Kalman filter to smooth the RS
 
 Altough this tool was made to reuse RPI/OSMC devices as BLE tracker, it can work on any Linux machine with a Bluetooth device.
 
-## Related projects
-
-- https://github.com/mKeRix/room-assistant
-- https://github.com/happy-bubbles/presence
-- https://jptrsn.github.io/ESP32-mqtt-room/
-- https://github.com/1technophile/OpenMQTTGateway
-
 ## Prerequisites
+
 - On Debian based machines:
 ```
 apt-get install python3-pip python3-setuptools python3-dev libglib2.0-dev build-essential git
@@ -31,6 +25,7 @@ pip3 install requirements.txt
 ```
 
 ## General setup
+
 Before running the BLE tracker, you need to configure some settings in `config.yaml`.
 
  - `scan_period`: BLE scanning interval.
@@ -79,7 +74,9 @@ Now, every time the tracker device reports the distance to any monitored device,
 **Note**: If there is no location in range, the `location` field will be set to `status_off`, as configured in the (device setup)[#Device-set-up].
 
 ## Discovering and setting up your devices
+
 ### Distance calculation
+
 There are lot of different ways to **estimate** the distance to the BLE device, here we're using the formula:
 
 ```
@@ -160,6 +157,7 @@ Fields description:
 
 
 ## How to install
+
 1. Move the project folder to your prefered location
 2. Edit the `src/bletracker.service` and set the right paths to `WorkingDirectory` and `ExecStart`
 3. Adjust your settings in `config.yaml`
@@ -241,3 +239,10 @@ If the tracker is configured to include the location name or the RSSI, two addit
 
 - [PyConAu2016](https://pyvideo.org/events/pycon-au-2016.html) - [Working with real-time data streams in Python](https://www.youtube.com/watch?v=gFeTkB8VHpw)
 - GitHub repository (Lian Blackhall) - https://github.com/lblackhall/pyconau2016
+
+## Related projects
+
+- https://github.com/mKeRix/room-assistant
+- https://github.com/happy-bubbles/presence
+- https://jptrsn.github.io/ESP32-mqtt-room/
+- https://github.com/1technophile/OpenMQTTGateway

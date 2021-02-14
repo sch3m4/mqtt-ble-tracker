@@ -26,14 +26,15 @@ pip3 install requirements.txt
 ## General setup
 Before running the BLE tracker, you need to configure some settings in `config.yaml`.
 
- - `scan_period`: BLE scanning interval
- - `mqtt.name`: Client ID to use when sending MQTT messages
- - `mqtt.host`: MQTT Server
- - `mqtt.port`: MQTT Port
- - `mqtt.username`: MQTT Username
- - `mqtt.password`: MQTT Password
- - `mqtt.topic`: MQTT Topic used by this tracker device. **Note**: Each tracker device must use a different topic.
- - `mqtt.qos`: MQTT QoS (see https://www.eclipse.org/paho/files/mqttdoc/MQTTClient/html/qos.html)
+ - `scan_period`: BLE scanning interval.
+ - `single_tracker`: Boolean to specify the [deployment type](#Single-tracker).
+ - `mqtt.name`: Client ID to use when sending MQTT messages.
+ - `mqtt.host`: MQTT Server.
+ - `mqtt.port`: MQTT Port.
+ - `mqtt.username`: MQTT Username.
+ - `mqtt.password`: MQTT Password.
+ - `mqtt.topic`: MQTT Topic used by this tracker device. **Note**: Depending on the integration, each tracker device should use a different topic (Home Assistant integration)[#Home-Assistant-integration].
+ - `mqtt.qos`: MQTT QoS (see https://www.eclipse.org/paho/files/mqttdoc/MQTTClient/html/qos.html).
  - `mqtt.keepalive`: MQTT Keepalive. If no data has been transfered with the MQTT server after that value, client sends a heartbeat to the server.
  - `messages.include_location`: Boolean to specify whether include the name of the estimated location of the device in the MQTT message or not.
  - `messages.include_rssi`: Boolean to specify whether include the RSSI in the MQTT message or not.
@@ -50,7 +51,7 @@ To add a new location, follow this steps:
 1. [Set up the tracked device](#Discovering-and-setting-up-your-devices)  in the `config.yaml` file.
 2. Take the tracked device to the different locations you want to identify.
 3. Write down the average values for `distance` reported by the tracker device on each location.
-4. Set the distances for each location in `config.yaml` under `locations` section as follows:
+4. Set the distance ranges for each location in `config.yaml` under `locations` section as follows:
 ```
 locations:
   livingroom:
@@ -164,3 +165,13 @@ systemctl enable bletracker
 ```
 systemctl start bletracker
 ```
+
+## Home Assistant integration
+
+To integrate this tracker with Home Assistant to detect room presence, it can be done in two different ways:
+
+### Single tracker
+
+Using only one tracker device to report the location of the tracked BLE devices.
+- Locations must be configured
+- Location name will be appened to the `mqtt.topic`

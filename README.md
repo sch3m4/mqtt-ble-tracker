@@ -37,7 +37,7 @@ To discover devices as well as calculate the "**MR**" and the "**N**" constant, 
 python3 src/tracker.py --scan
 ```
 
-***Note**: You can filter out by a specific device by adding the argument "--device mac-address"*
+***Note**: You can filter out the scan by a specific device by adding the argument "--device mac-address"*
    
 
 ## How to use

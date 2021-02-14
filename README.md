@@ -32,10 +32,12 @@ For the software to be able to calculate the distance to your device, you need t
 2. **N**: Constant (set between 2 and 4, depending on environment conditions)
 
 ### Discovering and adjustment
-To discover and calculate the "**N**" constant, run the script with the following arguments:
+To discover devices as well as calculate the "**MR**" and the "**N**" constant, run the script with the following arguments:
 ```
 python3 src/tracker.py --scan
 ```
+
+*Note*: You can filter out by a specific device by adding the argument "--device mac-address" 
    
 
 ## How to use

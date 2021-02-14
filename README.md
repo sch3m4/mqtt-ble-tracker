@@ -8,7 +8,7 @@ It supports two deployment types for room presence detection by using [one singl
 
 [Home Assistant](https://www.home-assistant.io/) compatible.
 
-Altough this tool was made to reuse RPI devices (such as media players) as BLE tracker, it can work on any Linux machine with a Bluetooth device.
+Altough this tool was made to reuse RPI devices (such as media players) as BLE trackers, it can work on any Linux machine with a Bluetooth device.
 
 ## Prerequisites
 

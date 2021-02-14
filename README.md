@@ -27,8 +27,8 @@ There are lot of different ways to estimate the distance to the BLE device, here
  ```
 
 For the software to be able to calculate the distance to your device, you need to provide three parameters per each BLE device:
-1. **RSSI** at 1 meter distance
-2. **MR**: Measured RSSI at 1 meter
+1. **RSSI**: Received signal strength indicator from the device to track
+2. **MR**: RSSI at 1 meter
 2. **N** (constant between 2 and 4, depending on environment conditions)
 
 ### Discovering and adjustment

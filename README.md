@@ -1,10 +1,12 @@
-## BLE Tracker
+## MQTT Bluetooth Low Energy devices tracker
 
-This project was made to reuse RPI/OSMC devices as BLE tracker, but it can work on any Linux machine with a Bluetooth device.
+Altough this tool was made to reuse RPI/OSMC devices as BLE tracker, it can work on any Linux machine with a Bluetooth device.
 
 ## Description
 
-multiroom + hass + kalman filter
+This tool can be used as a room presence detector and tracker for BLE devices.
+
+Every time a BLE beacon is received, it applies a Kalman filter to smooth the RSSI and reduce the noise to make the system more accurate.
 
 ## Prerequisites
 - On Debian based machines:
@@ -229,3 +231,8 @@ If the tracker is configured to include the location name or the RSSI, two addit
   "rssi" : -64
 }
 ```
+
+## Kalman Filter
+
+- PyConAu2016 - [Working with real-time data streams in Python](https://www.youtube.com/watch?v=gFeTkB8VHpw)
+- GitHub repository (Lian Blackhall) - https://github.com/lblackhall/pyconau2016

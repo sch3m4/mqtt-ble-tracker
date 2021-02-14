@@ -1,5 +1,5 @@
 ## BLE Tracker
-This project was made to reuse RPI/OSMC devices as BLE tracker, but can work on any Linux machine with a Bluetooth device.
+This project was made to reuse RPI/OSMC devices as BLE tracker, but it can work on any Linux machine with a Bluetooth device.
 
 ## Prerequisites
 - On Debian based machines:
@@ -13,7 +13,7 @@ pip3 install requirements.txt
 ```
 
 ## Discovering and setting up your devices
-1 .-
+1 .- 
 2 .-
 
 ## How to install
@@ -26,4 +26,4 @@ pip3 install requirements.txt
     cp src/bletracker.service /etc/systemd/system/
     systemctl enable bletracker
 6 .- You're ready to go
-    systemctl 
+    systemctl start bletracker

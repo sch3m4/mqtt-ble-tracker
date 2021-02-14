@@ -4,9 +4,11 @@ Room presence detector and tracker for BLE devices.
 
 Every time a BLE beacon is received, it applies a Kalman filter to smooth the RSSI and reduce the noise to make the system more accurate.
 
-Altough this tool was made to reuse RPI/OSMC devices as BLE tracker, it can work on any Linux machine with a Bluetooth device.
-
 It supports two deployment types for room presence detection by using [one single](#Single-tracker) BLE device tracker or [multiple ones](#Multiple-trackers).
+
+Home Assistant compatible.
+
+Altough this tool was made to reuse RPI/OSMC devices as BLE tracker, it can work on any Linux machine with a Bluetooth device.
 
 ## Prerequisites
 

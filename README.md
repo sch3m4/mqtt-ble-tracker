@@ -205,3 +205,27 @@ Using multiple tracker devices in diferent locations.
   - Tracker device of the livingroom: `topic: bletracker/livingroom`
   - Tracker device of the bedroom: `topic: bletracker/bedroom`
   - ...
+
+## Message format
+
+The simplest message structure is as follows:
+
+```
+{
+  "id" : "ca:fe:ca:fe:ca:fe",
+  "name" : "ble tag 1",
+  "distance" : 1.04
+}
+```
+
+If the tracker is configured to include the location name or the RSSI, two additional fields are included:
+
+```
+{
+  "id" : "ca:fe:ca:fe:ca:fe",
+  "name" : "ble tag 1",
+  "distance" : 1.04,
+  "location" : "livingroom",
+  "rssi" : -64
+}
+```

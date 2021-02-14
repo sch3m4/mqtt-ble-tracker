@@ -7,15 +7,15 @@ This project was made to reuse RPI/OSMC devices as BLE tracker, but it can work 
 apt-get install python3-pip python3-setuptools libglib2.0-dev build-essential git
 ```
 
-- Install Python dependencies:
-```
-pip3 install requirements.txt
-```
-
 - Clone the repository
 ```
 git clone https://github.com/sch3m4/bletracker.git
 cd bletracker
+```
+
+- Install Python dependencies:
+```
+pip3 install requirements.txt
 ```
 
 ## Discovering and setting up your devices

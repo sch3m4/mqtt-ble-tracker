@@ -13,10 +13,26 @@ pip3 install requirements.txt
 ```
 
 ## Discovering and setting up your devices
-1 .- 
-2 .-
+### Distance calculation
+There are lot of different ways to estimate the distance to the BLE device, here we're using the formula:
 
-## How to install
+ ```
+ distance = 10 ^ ( (MR — RSSI) / (10 * N) )
+ ```
+
+For the software to be able to calculate the distance to your device, you need to provide three parameters per each BLE device:
+1. **RSSI** at 1 meter distance
+2. **MR**: Measured RSSI at 1 meter
+2. **N** (constant between 2 and 4, depending on environment conditions)
+
+### Discovering and adjustment
+To discover and calculate the "**N**" constant, run the script with the following arguments:
+```
+python3 src/tracker.py --scan
+```
+   
+
+## How to use
 1. Clone the repository
 2. Install "requirements.txt
 2. Move the project folder to your prefered location

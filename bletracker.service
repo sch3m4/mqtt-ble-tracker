@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 Type=idle
-WorkingDirectory=/home/osmc/btracker
-ExecStart=/usr/bin/python3 /home/osmc/btracker/tracker.py --monitor
+WorkingDirectory=/home/osmc/bletracker/src
+ExecStart=/usr/bin/python3 /home/osmc/bletracker/src/tracker.py --monitor
 Restart=always
 
 [Install]

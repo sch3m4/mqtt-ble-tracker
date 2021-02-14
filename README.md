@@ -204,8 +204,8 @@ Using multiple tracker devices in diferent locations.
 
 - `single_tracker` setting must be set to `false` in `config.yaml`
 - `mqtt.topic` must be unique for each tracker device:
-  - Tracker device of the livingroom: `topic: bletracker/livingroom`
-  - Tracker device of the bedroom: `topic: bletracker/bedroom`
+  - Tracker device in the livingroom: `topic: bletracker/livingroom`
+  - Tracker device in the bedroom: `topic: bletracker/bedroom`
   - ...
 
 ## Message format

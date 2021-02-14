@@ -27,6 +27,14 @@ cd bletracker
 ```
 pip3 install requirements.txt
 ```
+- Check bluetooth device state:
+```
+sudo hciconfig hci0 down && sudo hciconfig hci0 up
+```
+If you receive `Can't init device hci0: Operation not possible due to RF-kill (132)` execute:
+```
+connmanctl enable bluetooth
+```
 
 ## General setup
 

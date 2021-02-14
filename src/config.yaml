@@ -1,0 +1,44 @@
+scan_period: 3
+ma_window: 5
+
+mqtt:
+  name: Livingroom BLE Tracker
+  host: mqtt.mynetwork.local
+  port: 1883
+  username: #mqtt-user
+  password: #mqtt-pass
+  topic: bletracker/livingroom
+  qos: 0
+  keepalive: 60
+
+messages:
+  include_location: false
+  include_rssi: false
+
+devices:
+  - mac: 00:00:00:00:00:00
+    name: ble tag 1
+    measured_power: -57.75963
+    n: 4
+    timeout: 0
+    status_off: not_home
+
+  - mac: 00:00:00:00:00:01
+    name: ble tag 2
+    measured_power: -57.75963
+    n: 4
+    timeout: 0
+    status_off: not_home
+
+#locations:
+  #livingroom:
+    #min_dist: 0
+    #max_dist: 5
+#
+  #bathroom:
+    #min_dist: 5
+    #max_dist: 7
+#
+  #bedroom:
+    #min_dist: 7
+    #max_dist: 10

@@ -12,6 +12,8 @@ from multiprocessing import Queue
 from paho.mqtt import client as mqtt_client
 from bluepy.btle import Scanner, DefaultDelegate
 
+from lib.mavg import MovingAverageFilter
+
 
 class BLEScanner():
 	def __init__(self):
@@ -19,6 +21,15 @@ class BLEScanner():
 	
 	def scan(self,period=10):
 		return self.scanner.scan(period)
+
+	def get_n(self,mr,rssi,distance=1.0):
+#		return ( (mr - rssi) * math.log(math.e,10) ) / ( 10 * math.log(math.e,10) )
+		return 2 + abs(( (mr - rssi) * math.log(math.e,10) ) / 10)
+
+	def get_distance(self,rssi,mr,n):
+		if n == 0:
+			return -1
+		return math.pow ( 10 , (mr - rssi) / (10 * n ) )
 
 
 class BLEracker():
@@ -42,7 +53,7 @@ class BLEracker():
 		self.queue = Queue()
 		self.consumer = None
 		self.watchlist = None
-		self.devlist = {'rssi':{},'tstamps':{}}
+		self.devlist = {'tstamps':{}}
 		self.locations = {'ranges':[],'labels':[]}
 		self.config = None
 		self.mqtt = None
@@ -134,18 +145,12 @@ class BLEracker():
 		# update the timestamp
 		self.devlist['tstamps'][dev.addr] = int(time.time())
 
-		# update the RSSI list for that device
-		rssi_list = self.devlist['rssi'].get(dev.addr,list())
-		if len(rssi_list) == self.config['ma_window']:
-			rssi_list.pop(0)
-		rssi_list.append(dev.rssi)
-		self.devlist['rssi'][dev.addr] = rssi_list
-
 		# get the MA
-		ma_rssi = float("{:.2f}".format(self.__get_mavgs(rssi_list)[-1]))
+		self.mavgfilter.step(dev.rssi)
+		mavg_rssi = self.mavgfilter.current_state()
 
 		# calculate the distance with the  MA
-		distance = math.pow ( 10 , ( devcfg['measured_power'] - ma_rssi ) / ( 10 * devcfg['n'] ) )
+		distance = math.pow ( 10 , ( devcfg['measured_power'] - mavg_rssi ) / ( 10 * devcfg['n'] ) )
 
 		# build and send the message
 		msg = self.__build_message(
@@ -153,7 +158,7 @@ class BLEracker():
 			devcfg['name'],
 			float("{:.2f}".format(distance)),
 			self.__get_location(distance,devcfg),
-			ma_rssi
+			mavg_rssi
 		)
 		self.__send_message(msg)
 	
@@ -169,6 +174,9 @@ class BLEracker():
 	def get_config(self,path):
 		with open(path,"rt") as fd:
 			self.config = yaml.load(fd,Loader=yaml.FullLoader)
+
+		# set the moving average filter window size
+		self.mavgfilter = MovingAverageFilter(self.config['mavg_window'])
 
 		# map the devices MAC to a list
 		self.watchlist = [x['mac'] for x in self.config['devices']]

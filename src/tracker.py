@@ -36,18 +36,26 @@ def scan(maclist):
 				continue
 
 			if dev.addr in devlist.keys():
-				rssi += dev.rssi
-				rssi /= 2
+				devlist[dev.addr]['rssi'].append(dev.rssi)
 			else:
-				devlist[dev.addr] = dev.rssi
-				rssi = dev.rssi
+				devlist[dev.addr] = {'rssi' : [dev.rssi] , 'n' : 0 }
 
 			name = None
 			for (adtype, desc, value) in dev.getScanData():
 				if adtype == 9:
 					name = value
 
-			print("{} ({}), RSSI={} dB, RSSIAvg={:.4f}".format(dev.addr, name, dev.rssi , rssi))
+			rssi_abs = [abs(x) for x in devlist[dev.addr]['rssi']]
+			avg = -1 * ( sum(rssi_abs) / len(rssi_abs) )
+
+			n = scanner.get_n(avg,dev.rssi)
+			devlist[dev.addr]['n'] += n
+			devlist[dev.addr]['n'] /= 2
+			n = devlist[dev.addr]['n']
+
+			dist = scanner.get_distance(dev.rssi,avg,n)
+
+			print("{} ({}), RSSI={} dB, MR={:.4f}, N={:.8f}, Distance={:.2f}".format(dev.addr, name, dev.rssi , avg, n,dist))
 
 
 def main():

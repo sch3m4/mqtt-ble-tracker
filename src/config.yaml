@@ -1,5 +1,5 @@
 scan_period: 3
-ma_window: 5
+mavg_window: 5
 
 mqtt:
   name: Livingroom BLE Tracker

@@ -1,5 +1,10 @@
 ## BLE Tracker
+
 This project was made to reuse RPI/OSMC devices as BLE tracker, but it can work on any Linux machine with a Bluetooth device.
+
+## Description
+
+multiroom + hass + kalman filter
 
 ## Prerequisites
 - On Debian based machines:
@@ -17,6 +22,29 @@ cd bletracker
 ```
 pip3 install requirements.txt
 ```
+
+## General setup
+Before running the BLE tracker, you need to configure some settings in `config.yaml`.
+
+ - `scan_period`: BLE scanning interval
+ - `mqtt.name`: Client ID to use when sending MQTT messages
+ - `mqtt.host`: MQTT Server
+ - `mqtt.port`: MQTT Port
+ - `mqtt.username`: MQTT Username
+ - `mqtt.password`: MQTT Password
+ - `mqtt.topic`: MQTT Topic used by this tracker device. **Note**: Each tracker device must use a different topic.
+ - `mqtt.qos`: MQTT QoS (see https://www.eclipse.org/paho/files/mqttdoc/MQTTClient/html/qos.html)
+ - `mqtt.keepalive`: MQTT Keepalive. If no data has been transfered with the MQTT server after that value, client sends a heartbeat to the server.
+ - `messages.include_location`: Boolean to specify whether include the name of the estimated location of the device in the MQTT message or not.
+ - `messages.include_rssi`: Boolean to specify whether include the RSSI in the MQTT message or not.
+ 
+## Including location names
+You can send the name of the location where your device is at, by configuring the `locations` ranges.
+By default, location names are not sent to the MQTT server, but you can include them by setting the boolean setting `messages.include_location` in `config.yaml`.
+
+### Defining locations
+Locations are defined depending on the distance between the tracker device and the tracked device.
+To add a new location, [set up the tracked device](#Discovering-and-setting-up-your-devices)  in the `config.yaml` file.
 
 ## Discovering and setting up your devices
 ### Distance calculation
@@ -92,8 +120,8 @@ devices:
 
 ## How to install
 1. Move the project folder to your prefered location
-2. Edit the "src/bletracker.service" and set the right paths to "WorkingDirectory" and "ExecStart"
-3. Adjust your settings in "config.yaml"
+2. Edit the `src/bletracker.service` and set the right paths to `WorkingDirectory` and `ExecStart`
+3. Adjust your settings in `config.yaml`
 4. Install the service
 ```
 cp src/bletracker.service /etc/systemd/system/

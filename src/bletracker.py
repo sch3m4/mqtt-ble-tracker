@@ -12,7 +12,8 @@ from multiprocessing import Queue
 from paho.mqtt import client as mqtt_client
 from bluepy.btle import Scanner, DefaultDelegate
 
-from lib.mavg import MovingAverageFilter
+#from lib.mavg import MovingAverageFilter
+from lib.kalman import SingleStateKalmanFilter
 
 
 class BLEScanner():
@@ -23,8 +24,7 @@ class BLEScanner():
 		return self.scanner.scan(period)
 
 	def get_n(self,mr,rssi,distance=1.0):
-#		return ( (mr - rssi) * math.log(math.e,10) ) / ( 10 * math.log(math.e,10) )
-		return 2 + abs(( (mr - rssi) * math.log(math.e,10) ) / 10)
+		return 2 + abs ( ( (mr - rssi) * math.log(math.e,10) ) / 10 )
 
 	def get_distance(self,rssi,mr,n):
 		if n == 0:
@@ -53,7 +53,7 @@ class BLEracker():
 		self.queue = Queue()
 		self.consumer = None
 		self.watchlist = None
-		self.devlist = {'tstamps':{}}
+		self.devlist = {'tstamps':{},'kalman':{}}
 		self.locations = {'ranges':[],'labels':[]}
 		self.config = None
 		self.mqtt = None
@@ -95,12 +95,19 @@ class BLEracker():
 		return msg
 
 
-	def __send_message(self,msg):
+	def __send_message(self,msg,location):
 		if self.verbose:
 			print(msg)
 
+		# running in single tracker mode?
+		single_tracker = self.config.get('single_tracker',False)
+		if single_tracker:
+			topic = "{}/{}".format(self.config['mqtt']['topic'],location)
+		else:
+			topic = self.config['mqtt']['topic']
+
 		payload = json.dumps(msg)
-		self.mqtt.publish(self.config['mqtt']['topic'],payload,self.config['mqtt']['qos'])
+		self.mqtt.publish(topic,payload,self.config['mqtt']['qos'])
 
 
 	def __check_timeouts(self):
@@ -123,7 +130,7 @@ class BLEracker():
 					-1
 				)
 
-				self.__send_message(msg)
+				self.__send_message(msg,devcfg['status_off'])
 
 
 	def __process_queue(self):
@@ -145,22 +152,39 @@ class BLEracker():
 		# update the timestamp
 		self.devlist['tstamps'][dev.addr] = int(time.time())
 
+		# get the kalman filter for the device
+		kalmanf = self.devlist['kalman'].get(dev.addr,None)
+		if not kalmanf:
+			A = 1 # no process innovation
+			C = 1 # measurement
+			B = 0 # no control input
+			Q = 0.005 # process covariance
+			R = 1 # measurement covariance
+			x = dev.rssi # initial estimate
+			P = 1 # initial covariance
+			self.devlist['kalman'][dev.addr] = SingleStateKalmanFilter(A,B,C,x,P,Q,R)
+		
+		kalmanf = self.devlist['kalman'][dev.addr]
+		kalmanf.step(0,dev.rssi)
+
 		# get the MA
-		self.mavgfilter.step(dev.rssi)
-		mavg_rssi = self.mavgfilter.current_state()
+		rssi = kalmanf.current_state()		
 
 		# calculate the distance with the  MA
-		distance = math.pow ( 10 , ( devcfg['measured_power'] - mavg_rssi ) / ( 10 * devcfg['n'] ) )
+		distance = math.pow ( 10 , ( devcfg['measured_power'] - rssi ) / ( 10 * devcfg['n'] ) )
+
+		# get the location
+		location = self.__get_location(distance,devcfg)
 
 		# build and send the message
 		msg = self.__build_message(
 			devcfg['mac'],
 			devcfg['name'],
 			float("{:.2f}".format(distance)),
-			self.__get_location(distance,devcfg),
-			mavg_rssi
+			location,
+			rssi
 		)
-		self.__send_message(msg)
+		self.__send_message(msg,location)
 	
 
 	def __consumer(self):
@@ -175,15 +199,12 @@ class BLEracker():
 		with open(path,"rt") as fd:
 			self.config = yaml.load(fd,Loader=yaml.FullLoader)
 
-		# set the moving average filter window size
-		self.mavgfilter = MovingAverageFilter(self.config['mavg_window'])
-
 		# map the devices MAC to a list
 		self.watchlist = [x['mac'] for x in self.config['devices']]
 
 		# map the devices to timestamps and rssi
 		for mac in self.watchlist:
-			self.devlist['rssi'][mac] = []
+			self.devlist['kalman'][mac] = None
 			self.devlist['tstamps'][mac] = 0
 
 		# map the locations and labels to local vars

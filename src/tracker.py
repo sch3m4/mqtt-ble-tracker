@@ -4,7 +4,9 @@
 import signal
 import argparse
 import threading
+
 from bletracker import BLEracker,BLEScanner
+from lib.kalman import SingleStateKalmanFilter
 
 CONFIG_PATH = "config.yaml"
 
@@ -35,27 +37,29 @@ def scan(maclist):
 			if len(maclist) > 0 and dev.addr not in maclist:
 				continue
 
-			if dev.addr in devlist.keys():
-				devlist[dev.addr]['rssi'].append(dev.rssi)
-			else:
-				devlist[dev.addr] = {'rssi' : [dev.rssi] , 'n' : 0 }
+			if dev.addr not in devlist.keys():
+
+				A = 1 # no process innovation
+				C = 1 # measurement
+				B = 0 # no control input
+				Q = 0.005 # process covariance
+				R = 1 # measurement covariance
+				x = dev.rssi # initial estimate
+				P = 1 # initial covariance
+				devlist[dev.addr] = SingleStateKalmanFilter(A,B,C,x,P,Q,R)
+
+			devlist[dev.addr].step(0,abs(dev.rssi))
 
 			name = None
 			for (adtype, desc, value) in dev.getScanData():
 				if adtype == 9:
 					name = value
 
-			rssi_abs = [abs(x) for x in devlist[dev.addr]['rssi']]
-			avg = -1 * ( sum(rssi_abs) / len(rssi_abs) )
-
-			n = scanner.get_n(avg,dev.rssi)
-			devlist[dev.addr]['n'] += n
-			devlist[dev.addr]['n'] /= 2
-			n = devlist[dev.addr]['n']
-
-			dist = scanner.get_distance(dev.rssi,avg,n)
-
-			print("{} ({}), RSSI={} dB, MR={:.4f}, N={:.8f}, Distance={:.2f}".format(dev.addr, name, dev.rssi , avg, n,dist))
+			# calculate distance with the smoothed RSSI
+			frssi = -1 * devlist[dev.addr].current_state()
+			n = scanner.get_n(frssi,dev.rssi)
+			dist = scanner.get_distance(dev.rssi,frssi,n)
+			print("{} ({}), RSSI={} dB, MR={:.4f}, N={:.8f}, Distance={:.2f}".format(dev.addr, name, dev.rssi , frssi, n,dist))
 
 
 def main():

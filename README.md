@@ -2,12 +2,12 @@
 This project was made to reuse RPI/OSMC devices as BLE tracker, but can work on any Linux machine with a Bluetooth device.
 
 ## Prerequisites
-On Debian based machines:
+- On Debian based machines:
 ```
 apt-get install python3-pip python3-setuptools libglib2.0-dev build-essential
 ```
 
-Install Python dependencies:
+- Install Python dependencies:
 ```
 pip3 install requirements.txt
 ```

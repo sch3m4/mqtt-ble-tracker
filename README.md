@@ -12,6 +12,12 @@ apt-get install python3-pip python3-setuptools libglib2.0-dev build-essential
 pip3 install requirements.txt
 ```
 
+- Clone the repository
+```
+git clone https://github.com/sch3m4/bletracker.git
+cd bletracker
+```
+
 ## Discovering and setting up your devices
 ### Distance calculation
 There are lot of different ways to estimate the distance to the BLE device, here we're using the formula:

@@ -6,6 +6,8 @@ Every time a BLE beacon is received, it applies a Kalman filter to smooth the RS
 
 Altough this tool was made to reuse RPI/OSMC devices as BLE tracker, it can work on any Linux machine with a Bluetooth device.
 
+It supports two deployment types for room presence detection by using one single BLE device tracker or multiple ones.
+
 ## Prerequisites
 
 - On Debian based machines:

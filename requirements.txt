@@ -1,3 +1,4 @@
 bluepy
 paho-mqtt
 pyyaml
+numpy

@@ -179,4 +179,5 @@ Using only one tracker device to report the location of the tracked BLE devices.
 
 - `single_tracker` setting must be set to `true` in `config.yaml`.
 - Locations must be [configured](#Defining-locations).
-- Location name will be added to the `mqtt.topic` (If `mqtt.topic` is set to "bletracker", every time a device is tracked in a defined location a message will be sent to the topic "bletracker/[location_name]").
+- On presence notification, location name will be added to the `mqtt.topic`.
+  - If `mqtt.topic` is set to "bletracker", every time a device is tracked in a defined location a message will be sent to the topic "bletracker/[location_name]").

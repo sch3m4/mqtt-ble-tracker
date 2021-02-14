@@ -234,5 +234,5 @@ If the tracker is configured to include the location name or the RSSI, two addit
 
 ## Kalman Filter
 
-- PyConAu2016 - [Working with real-time data streams in Python](https://www.youtube.com/watch?v=gFeTkB8VHpw)
+- [PyConAu2016](https://pyvideo.org/events/pycon-au-2016.html) - [Working with real-time data streams in Python](https://www.youtube.com/watch?v=gFeTkB8VHpw)
 - GitHub repository (Lian Blackhall) - https://github.com/lblackhall/pyconau2016

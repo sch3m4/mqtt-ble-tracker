@@ -1,11 +1,17 @@
 ## MQTT Bluetooth Low Energy devices tracker
 
-This tool can be used as a room presence detector and tracker for BLE devices.
+Room presence detector and tracker for BLE devices.
 
 Every time a BLE beacon is received, it applies a Kalman filter to smooth the RSSI and reduce the noise to make the system more accurate.
 
 Altough this tool was made to reuse RPI/OSMC devices as BLE tracker, it can work on any Linux machine with a Bluetooth device.
 
+## Related projects
+
+- https://github.com/mKeRix/room-assistant
+- https://github.com/happy-bubbles/presence
+- https://jptrsn.github.io/ESP32-mqtt-room/
+- https://github.com/1technophile/OpenMQTTGateway
 
 ## Prerequisites
 - On Debian based machines:

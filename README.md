@@ -71,7 +71,7 @@ ca:fe:ca:fe:ca:fe (BLE Device), RSSI=-67 dB, MR=-69.1642, N=2.09399012, Distance
 ca:fe:ca:fe:ca:fe (BLE Device), RSSI=-70 dB, MR=-69.6756, N=2.01408935, Distance=1.04
 ```
 
-In this case, let's save:
+In this case, let's write down:
  - **MR**: -69.6756
  - **N**: 2.01408935
 

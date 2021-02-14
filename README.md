@@ -168,7 +168,10 @@ systemctl start bletracker
 
 ## Home Assistant integration
 
-To integrate this tracker with Home Assistant to detect room presence, it can be done in two different ways:
+There are two different ways to integrate this tracker with Home Assistant to detect room presence.
+
+- (Single tracker)[#Single-tracker]
+- Multiples trackers
 
 ### Single tracker
 

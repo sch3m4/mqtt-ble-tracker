@@ -171,7 +171,7 @@ systemctl start bletracker
 There are two different ways to integrate this tracker with Home Assistant to detect room presence.
 
 - [Single tracker](#Single-tracker)
-- Multiple trackers
+- [Multiple trackers](#Multiple-trackers)
 
 For Home Assistant, there is no difference. In order to enable presence detection you only have to add the following sensor:
 
@@ -198,4 +198,10 @@ Using only one tracker device to report the location of the tracked BLE devices.
 
 ### Multiple trackers
 
-To use multiple tracker devices in different rooms
+Using multiple tracker devices in diferent locations.
+
+- `single_tracker` setting must be set to `false` in `config.yaml`
+- `mqtt.topic` must be unique for each tracker device:
+  - Tracker device of the livingroom: `topic: bletracker/livingroom`
+  - Tracker device of the bedroom: `topic: bletracker/bedroom`
+  - ...

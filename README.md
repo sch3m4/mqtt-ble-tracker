@@ -47,7 +47,7 @@ Before running the BLE tracker, you need to configure some settings in `config.y
  - `mqtt.port`: MQTT Port.
  - `mqtt.username`: MQTT Username.
  - `mqtt.password`: MQTT Password.
- - `mqtt.topic`: MQTT Topic used by this tracker device. **Note**: Depending on the integration, each tracker device should use a different topic (Home Assistant integration)[#Home-Assistant-integration].
+ - `mqtt.topic`: MQTT Topic used by this tracker device. **Note**: Depending on the integration, each tracker device should use a different topic [Home Assistant integration](#Home-Assistant-integration).
  - `mqtt.qos`: MQTT QoS (see https://www.eclipse.org/paho/files/mqttdoc/MQTTClient/html/qos.html).
  - `mqtt.keepalive`: MQTT Keepalive. If no data has been transfered with the MQTT server after that value, client sends a heartbeat to the server.
  - `messages.include_location`: Boolean to specify whether include the name of the estimated location of the device in the MQTT message or not.

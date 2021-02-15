@@ -83,7 +83,7 @@ locations:
 
 Now, every time the tracker device reports the distance to any monitored device, it will include the location name.
 
-**Note**: If there is no location in range, the `location` field will be set to `status_off`, as configured in the (device setup)[#Device-set-up].
+**Note**: If there is no location in range, the `location` field will be set to `status_off`, as configured in the [device setup](#Device-set-up).
 
 ## Discovering and setting up your devices
 

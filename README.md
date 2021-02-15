@@ -162,8 +162,8 @@ devices:
 Fields description:
 - `mac`: Device bluetooth mac address.
 - `name`: Device name.
-- `measured_rssi`: RSSI value 1 meter away from the tracker device (see: (Discovering and adjustment)[#Discovering-and-adjustment]).
-- `n`: Constant to calculate the distance (see: (Discovering and adjustment)[#Discovering-and-adjustment]).
+- `measured_rssi`: RSSI value 1 meter away from the tracker device (see: [Discovering and adjustment](#Discovering-and-adjustment)).
+- `n`: Constant to calculate the distance (see: [Discovering and adjustment](#Discovering-and-adjustment)).
 - `timeout`: If the device is not seen after this period of time (seconds), the tracker device sends a message with `'distance' : -1` to the MQTT broker (0 means disabled). If `message.include_location` is set to `true`, the location name  will be set to `status_off`.
 - `status_off`: Location name when the device is untracked (due to timeout) or out of range from the defined locations.
 

@@ -1,3 +1,6 @@
+<p align="center"><image src="img/mqtt-ble.png"></p>
+
+
 ## MQTT Bluetooth Low Energy devices tracker
 
 Room presence detector and tracker for BLE devices.

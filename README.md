@@ -88,11 +88,11 @@ Now, every time the tracker device reports the distance to any monitored device,
 
 **Note**: If there is no location in range, the `location` field will be set to `status_off`, as configured in the [device setup](#Device-set-up).
 
-## Location overlapping
+## Sensors overlapping
 
-If you're using [multiple trackers](#Multiple-trackers) and your implementation has issues with the overlapping of sensors, you can define the minimum required level of RSSI for each device by using the `device.min_rssi' setting, as shown in [device setup](#Device-set-up).
+If you're using [multiple trackers](#Multiple-trackers) and your implementation has issues with the overlapping of sensors, you can define the minimum required level of RSSI for each device by using the `device.min_rssi` setting, as shown in [device setup](#Device-set-up).
 
-If you do so, any received beacon above that threshold will be ignored.
+If you do so, any received beacon below that threshold will be ignored.
 
 ## Discovering and setting up your devices
 

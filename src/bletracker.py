@@ -12,7 +12,6 @@ from multiprocessing import Queue
 from paho.mqtt import client as mqtt_client
 from bluepy.btle import Scanner, DefaultDelegate
 
-#from lib.mavg import MovingAverageFilter
 from lib.kalman import SingleStateKalmanFilter
 
 
@@ -152,6 +151,13 @@ class BLEracker():
 		# update the timestamp
 		self.devlist['tstamps'][dev.addr] = int(time.time())
 
+
+		# verify RSSI threshold
+		min_rssi = devcfg.get('min_rssi',-200)
+		if dev.rssi < min_rssi:
+			return
+		
+
 		# get the kalman filter for the device
 		kalmanf = self.devlist['kalman'].get(dev.addr,None)
 		if not kalmanf:
@@ -162,13 +168,12 @@ class BLEracker():
 			R = 1 # measurement covariance
 			x = dev.rssi # initial estimate
 			P = 1 # initial covariance
-			self.devlist['kalman'][dev.addr] = SingleStateKalmanFilter(A,B,C,x,P,Q,R)
-		
-		kalmanf = self.devlist['kalman'][dev.addr]
-		kalmanf.step(0,dev.rssi)
+			self.devlist['kalman'][dev.addr] = SingleStateKalmanFilter(A,B,C,x,P,Q,R)		
 
 		# get the MA
-		rssi = kalmanf.current_state()		
+		kalmanf = self.devlist['kalman'][dev.addr]
+		kalmanf.step(0,dev.rssi)
+		rssi = kalmanf.current_state()
 
 		# calculate the distance with the  MA
 		distance = math.pow ( 10 , ( devcfg['measured_power'] - rssi ) / ( 10 * devcfg['n'] ) )

@@ -88,6 +88,12 @@ Now, every time the tracker device reports the distance to any monitored device,
 
 **Note**: If there is no location in range, the `location` field will be set to `status_off`, as configured in the [device setup](#Device-set-up).
 
+## Location overlapping
+
+If you're using [multiple trackers](#Multiple-trackers) and your implementation has issues with the overlapping of sensors, you can define the minimum required level of RSSI for each device by using the `device.min_rssi' setting, as shown in [device setup](#Device-set-up).
+
+If you do so, any received beacon above that threshold will be ignored.
+
 ## Discovering and setting up your devices
 
 ### Distance calculation
@@ -158,6 +164,7 @@ devices:
     name: ble tag 1
     measured_rssi: -69.6756
     n: 2.01408935
+    min_rssi: -79
     timeout: 0
     status_off: not_home
 ```
@@ -167,6 +174,7 @@ Fields description:
 - `name`: Device name.
 - `measured_rssi`: RSSI value 1 meter away from the tracker device (see: [Discovering and adjustment](#Discovering-and-adjustment)).
 - `n`: Constant to calculate the distance (see: [Discovering and adjustment](#Discovering-and-adjustment)).
+- `min_rssi`: RSSI values (before filter smoothing) below this value will be ignored.
 - `timeout`: If the device is not seen after this period of time (seconds), the tracker device sends a message with `'distance' : -1` to the MQTT broker (0 means disabled). If `message.include_location` is set to `true`, the location name  will be set to `status_off`.
 - `status_off`: Location name when the device is untracked (due to timeout) or out of range from the defined locations.
 

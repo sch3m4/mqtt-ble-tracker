@@ -1,45 +1,39 @@
 scan_period: 3
 
-single_tracker: true
+single_tracker: false
 
 mqtt:
-  name: BLE Tracker
-  host: mqtt.mynetwork.local
+  name: BLE Tracker - Salon
+  host: 192.168.6.12
   port: 1883
   username: #mqtt-user
   password: #mqtt-pass
-  topic: bletracker
+  topic: bletracker/salon
   qos: 0
   keepalive: 60
 
 messages:
   include_location: false
-  include_rssi: false
+  include_rssi: true
 
 devices:
-  - mac: ca:fe:ca:fe:ca:fe
-    name: ble tag 1
+  - mac: c7:29:0e:40:c0:f8
+    name: Smartwatch Chema
     measured_power: -70.7024
     n: 2.01292389
+    min_rssi: -79
     timeout: 0
     status_off: not_home
 
-  - mac: 00:00:00:00:00:01
-    name: ble tag 2
-    measured_power: -57.75963
-    n: 2.24049349
-    timeout: 0
-    status_off: not_home
-
-locations:
-  bedroom:
-    min_dist: 0
-    max_dist: 5
-
-  bathroom:
-    min_dist: 5
-    max_dist: 7
-
-  livingroom:
-    min_dist: 7
-    max_dist: 10
+#locations:
+#  bedroom:
+#    min_dist: 0
+#    max_dist: 5
+#
+#  bathroom:
+#    min_dist: 5
+#    max_dist: 7
+#
+#  livingroom:
+#    min_dist: 7
+#    max_dist: 10

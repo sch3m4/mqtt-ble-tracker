@@ -197,6 +197,7 @@ For Home Assistant, there is no difference. In order to enable presence detectio
   name: ble tag 1
   device_id: ca:fe:ca:fe:ca:fe
   state_topic: bletracker
+  timeout: 60
   away_timeout: 360
 ```
 

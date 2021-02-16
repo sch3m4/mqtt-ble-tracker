@@ -11,9 +11,11 @@ from lib.kalman import SingleStateKalmanFilter
 CONFIG_PATH = "config.yaml"
 
 exitevt = threading.Event()
+logger = None
 
 
 def handle_exit(signal,frame):
+	global exitevt
 	exitevt.set()
 
 
@@ -24,7 +26,6 @@ def monitor(verbose):
 
 	while not exitevt.is_set():
 		btracker.scan()
-
 	btracker.stop()
 
 
@@ -66,7 +67,6 @@ def main():
 	signal.signal(signal.SIGINT, handle_exit )
 	signal.signal(signal.SIGTERM, handle_exit )
 	exitevt.clear()
-
 
 	parser = argparse.ArgumentParser()
 	group = parser.add_mutually_exclusive_group(required=True)

@@ -73,10 +73,10 @@ class BLEracker():
 			if a < distance and distance < b:
 				return self.locations['labels'][idx]
 		# not in range
-		return devcfg['status_off']
+		return devcfg.get('status_off',None)
 
 
-	def __build_message(self,devid,name,distance,location=None,rssi=-1):
+	def __build_message(self,devid,name,distance,location,rssi,binary,binvalue):
 		msg = {
 			'id' : devid,
 			'name' : name,
@@ -91,19 +91,25 @@ class BLEracker():
 		if include_rssi:
 			msg['rssi'] = rssi
 
+		if binary:
+			msg['in_range'] = binvalue
+
 		return msg
 
 
-	def __send_message(self,msg,location):
-		if self.verbose:
-			print(msg)
-
+	def __send_message(self,msg,location,subtopic=None):
 		# running in single tracker mode?
 		single_tracker = self.config.get('single_tracker',False)
 		if single_tracker:
 			topic = "{}/{}".format(self.config['mqtt']['topic'],location)
 		else:
 			topic = self.config['mqtt']['topic']
+
+		if subtopic:
+			topic = "{}/{}".format(topic,subtopic)
+
+		if self.verbose:
+			print("{}: {}".format(topic,msg))
 
 		payload = json.dumps(msg)
 		self.mqtt.publish(topic,payload,self.config['mqtt']['qos'])
@@ -112,24 +118,38 @@ class BLEracker():
 	def __check_timeouts(self):
 		now = int(time.time())
 		items = self.devlist['tstamps'].keys()
+
 		for dev in items:
-			tstamp = self.devlist['tstamps'].get(dev,0)
+			tstamp = self.devlist['tstamps'].get(dev,now)
 			devcfg = next((x for x in self.config['devices'] if x['mac'] == dev),dict())
 			timeout = devcfg.get('timeout',0)
 
 			# device timed out
 			if timeout > 0 and now - tstamp > timeout:
-				self.devlist['tstamps'][dev] = now
+				# check whether 'meassured_power' and 'n' are defined or not
+				mpower = devcfg.get('measured_power',None)
+				n = devcfg.get('n',None)
+				if mpower and n:
+					binary = False
+				else:
+					binary = True
+
+				location = devcfg.get('status_off',None)
 
 				msg = self.__build_message(
 					dev,
 					devcfg['name'],
 					-1,
-					devcfg['status_off'],
-					-1
+					location,
+					-1,
+					binary,
+					False
 				)
 
-				self.__send_message(msg,devcfg['status_off'])
+				subtopic = devcfg.get('subtopic',None)
+				self.__send_message(msg,location,subtopic)
+
+			self.devlist['tstamps'][dev] = now
 
 
 	def __process_queue(self):
@@ -158,25 +178,35 @@ class BLEracker():
 			return
 		
 
-		# get the kalman filter for the device
-		kalmanf = self.devlist['kalman'].get(dev.addr,None)
-		if not kalmanf:
-			A = 1 # no process innovation
-			C = 1 # measurement
-			B = 0 # no control input
-			Q = 0.005 # process covariance
-			R = 1 # measurement covariance
-			x = dev.rssi # initial estimate
-			P = 1 # initial covariance
-			self.devlist['kalman'][dev.addr] = SingleStateKalmanFilter(A,B,C,x,P,Q,R)		
+		# check whether 'meassured_power' and 'n' are defined or not
+		mpower = devcfg.get('measured_power',None)
+		n = devcfg.get('n',None)
+		if mpower and n:
+			# get the kalman filter for the device
+			kalmanf = self.devlist['kalman'].get(dev.addr,None)
+			if not kalmanf:
+				A = 1 # no process innovation
+				C = 1 # measurement
+				B = 0 # no control input
+				Q = 0.005 # process covariance
+				R = 1 # measurement covariance
+				x = dev.rssi # initial estimate
+				P = 1 # initial covariance
+				self.devlist['kalman'][dev.addr] = SingleStateKalmanFilter(A,B,C,x,P,Q,R)		
 
-		# get the MA
-		kalmanf = self.devlist['kalman'][dev.addr]
-		kalmanf.step(0,dev.rssi)
-		rssi = kalmanf.current_state()
+			# get the MA
+			kalmanf = self.devlist['kalman'][dev.addr]
+			kalmanf.step(0,dev.rssi)
+			rssi = kalmanf.current_state()
 
-		# calculate the distance with the  MA
-		distance = math.pow ( 10 , ( devcfg['measured_power'] - rssi ) / ( 10 * devcfg['n'] ) )
+			# calculate the distance with the  MA
+			distance = math.pow ( 10 , ( mpower - rssi ) / ( 10 * n ) )
+
+			binary = False
+		else:
+			distance = -1
+			rssi = dev.rssi
+			binary = True
 
 		# get the location
 		location = self.__get_location(distance,devcfg)
@@ -187,9 +217,12 @@ class BLEracker():
 			devcfg['name'],
 			float("{:.2f}".format(distance)),
 			location,
-			rssi
+			rssi,
+			binary,
+			True
 		)
-		self.__send_message(msg,location)
+		subtopic = devcfg.get('subtopic',None)
+		self.__send_message(msg,location,subtopic)
 	
 
 	def __consumer(self):
@@ -206,11 +239,6 @@ class BLEracker():
 
 		# map the devices MAC to a list
 		self.watchlist = [x['mac'] for x in self.config['devices']]
-
-		# map the devices to timestamps and rssi
-		for mac in self.watchlist:
-			self.devlist['kalman'][mac] = None
-			self.devlist['tstamps'][mac] = 0
 
 		# map the locations and labels to local vars
 		locations = self.config.get('locations',dict())

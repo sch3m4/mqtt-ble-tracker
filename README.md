@@ -179,6 +179,23 @@ Fields description:
 - `status_off`: Location name when the device is untracked (due to timeout) or out of range from the defined locations.
 
 
+### Binary detection
+
+Additionally, if you want to identify whether a device is present or not (think about muting the media server or switching on a red light when your meetings headset/microphone is turned on) to trigger an action the device set up is much simpler, you only have to remove the `meassured_rssi` and `n` from the device configuration as follows:
+
+```
+devices:
+  - mac: ca:fe:ca:fe:ca:fe
+    name: ble tag 3
+    min_rssi: -79
+    timeout: 0
+    subtopic: bletag3
+```
+
+If you also want the system to send a message when the device is not detected, just set a value for `timeout`.
+
+Since the device is not going to be located, `status_off` can be removed.
+
 ## How to install
 
 1. Move the project folder to your prefered location
@@ -192,6 +209,47 @@ systemctl enable bletracker
 5. You're ready to go
 ```
 systemctl start bletracker
+```
+
+## Message format
+
+### Distance calculation
+
+The simplest message structure is as follows:
+
+```
+{
+  "id" : "ca:fe:ca:fe:ca:fe",
+  "name" : "ble tag 1",
+  "distance" : 1.04
+}
+```
+
+If the tracker is configured to include the location name or the RSSI, two additional fields are included:
+
+```
+{
+  "id" : "ca:fe:ca:fe:ca:fe",
+  "name" : "ble tag 1",
+  "distance" : 1.04,
+  "location" : "livingroom",
+  "rssi" : -64
+}
+```
+
+### Binary detection
+
+When configuring a device in binary detection, the message includes the boolean field `in_range` set to True/False.
+
+On this scenario, the message format is as follows:
+
+```
+{
+  "id" : "ca:fe:ca:fe:ca:fe",
+  "name" : "ble tag 1",
+  "distance" : -1,
+  "in_range" : True
+}
 ```
 
 ## Home Assistant integration
@@ -235,29 +293,22 @@ Using multiple tracker devices in diferent locations.
   - Tracker device in the bedroom: `topic: bletracker/bedroom`
   - ...
 
-## Message format
+### Binary detection
 
-The simplest message structure is as follows:
-
-```
-{
-  "id" : "ca:fe:ca:fe:ca:fe",
-  "name" : "ble tag 1",
-  "distance" : 1.04
-}
-```
-
-If the tracker is configured to include the location name or the RSSI, two additional fields are included:
+To integrate the binary detection of a device in Home Assistant, create a sensor as follows:
 
 ```
-{
-  "id" : "ca:fe:ca:fe:ca:fe",
-  "name" : "ble tag 1",
-  "distance" : 1.04,
-  "location" : "livingroom",
-  "rssi" : -64
-}
+binary_sensor:
+  - platform: mqtt
+    name: Tracked device on
+    state_topic: "bletracker/livingroom/bletag1"
+    value_template: "{{ value_json.in_range }}"
+    payload_on: "True"
+    payload_off: "False"
+    off_delay: 120
 ```
+
+[Home Assistant binary_sensor.mqtt](https://www.home-assistant.io/integrations/binary_sensor.mqtt/)
 
 ## Kalman Filter
 
